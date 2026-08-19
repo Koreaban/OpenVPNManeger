@@ -13,6 +13,19 @@ VPN Manager is a VPN connection manager based on **OpenVPN**. It uses OpenVPN co
 * Check the current **public IP address**.
 * Manage and use OpenVPN configuration files.
 
+## Getting Started
+
+Before using VPN Manager, you need to have a **Proton VPN account**.
+
+1. Create an account on Proton VPN.
+2. Log in to your Proton VPN account.
+3. Obtain your **OpenVPN username and password** from your Proton VPN account.
+4. Download the required Proton VPN **OpenVPN configuration files**.
+5. Place the configuration files in the appropriate folder.
+6. Add your OpenVPN credentials to the `openvpn.key` file.
+
+> **Important:** The OpenVPN username and password are not necessarily the same as your regular Proton account login credentials. Use the dedicated **OpenVPN / IKEv2 credentials** provided by Proton VPN.
+
 ## OpenVPN Credentials
 
 To connect to Proton VPN servers, the application requires **OpenVPN credentials**.
@@ -21,7 +34,7 @@ The credentials should be stored in an `openvpn.key` file located in the folder 
 
 Example:
 
-```text
+```text id="4j8m2k"
 USERNAME=your_openvpn_username
 PASSWORD=your_openvpn_password
 ```
@@ -43,6 +56,7 @@ For GitHub, use a template file containing placeholder values instead of real cr
 
 * Linux
 * OpenVPN
+* A Proton VPN account
 * Proton VPN OpenVPN configuration files
 * Proton VPN OpenVPN credentials
 * Python dependencies required by the project
