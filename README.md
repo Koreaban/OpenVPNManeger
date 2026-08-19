@@ -13,6 +13,35 @@ VPN Manager is a VPN connection manager based on **OpenVPN**. It uses OpenVPN co
 * Check the current **public IP address**.
 * Manage and use OpenVPN configuration files.
 
+## Requirements
+
+Before using VPN Manager, make sure you have:
+
+* Linux
+* Python 3
+* **OpenVPN installed on your Linux system**
+* A Proton VPN account
+* Proton VPN OpenVPN configuration files
+* Proton VPN OpenVPN credentials
+* Python dependencies required by the project
+
+### Installing OpenVPN
+
+If OpenVPN is not installed, install it using your distribution's package manager.
+
+For Debian/Ubuntu-based distributions:
+
+```bash
+sudo apt update
+sudo apt install openvpn
+```
+
+You can verify the installation with:
+
+```bash
+openvpn --version
+```
+
 ## Getting Started
 
 Before using VPN Manager, you need to have a **Proton VPN account**.
@@ -28,7 +57,7 @@ Before using VPN Manager, you need to have a **Proton VPN account**.
 
 ## Running the Manager
 
-After setting up the configuration files and credentials, open a terminal and navigate to the project directory:
+After installing OpenVPN and setting up the configuration files and credentials, open a terminal and navigate to the project directory:
 
 ```bash
 cd /path/to/VPN-Manager
@@ -48,7 +77,7 @@ The credentials should be stored in an `openvpn.key` file located in the folder 
 
 Example:
 
-```text id="f6k2qp"
+```text
 USERNAME=your_openvpn_username
 PASSWORD=your_openvpn_password
 ```
@@ -63,18 +92,8 @@ For GitHub, use a template file containing placeholder values instead of real cr
 2. The user selects a country or a specific server.
 3. The manager uses the corresponding OpenVPN configuration.
 4. Authentication credentials are loaded from `openvpn.key`.
-5. The application establishes the VPN connection.
+5. The application establishes the VPN connection through the locally installed OpenVPN client.
 6. The manager can check the current public IP and save information about the last connected server.
-
-## Requirements
-
-* Linux
-* Python 3
-* OpenVPN
-* A Proton VPN account
-* Proton VPN OpenVPN configuration files
-* Proton VPN OpenVPN credentials
-* Python dependencies required by the project
 
 ## Roadmap
 
