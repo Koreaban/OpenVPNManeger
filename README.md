@@ -26,6 +26,20 @@ Before using VPN Manager, you need to have a **Proton VPN account**.
 
 > **Important:** The OpenVPN username and password are not necessarily the same as your regular Proton account login credentials. Use the dedicated **OpenVPN / IKEv2 credentials** provided by Proton VPN.
 
+## Running the Manager
+
+After setting up the configuration files and credentials, open a terminal and navigate to the project directory:
+
+```bash
+cd /path/to/VPN-Manager
+```
+
+Then start the application with:
+
+```bash
+python3 main.py
+```
+
 ## OpenVPN Credentials
 
 To connect to Proton VPN servers, the application requires **OpenVPN credentials**.
@@ -34,7 +48,7 @@ The credentials should be stored in an `openvpn.key` file located in the folder 
 
 Example:
 
-```text id="4j8m2k"
+```text id="f6k2qp"
 USERNAME=your_openvpn_username
 PASSWORD=your_openvpn_password
 ```
@@ -55,6 +69,7 @@ For GitHub, use a template file containing placeholder values instead of real cr
 ## Requirements
 
 * Linux
+* Python 3
 * OpenVPN
 * A Proton VPN account
 * Proton VPN OpenVPN configuration files
