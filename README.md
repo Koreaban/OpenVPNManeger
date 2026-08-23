@@ -96,7 +96,7 @@ sudo python3 init.py
 **Windows:** OpenVPN requires administrator privileges to create the TAP network adapter. Open a terminal (PowerShell or CMD) **as Administrator**, then run:
 
 ```powershell
-python init.py
+python3 init.py
 ```
 
 ## Menu Options
