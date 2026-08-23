@@ -5,6 +5,9 @@ import time
 import subprocess
 from getdata import getdata_inf
 import threading
+from system import get_vpn, scan_system
+
+system = scan_system()
 
 servers = {
     "ca": ["ca1", "ca2", "ca3"],
@@ -12,11 +15,10 @@ servers = {
     "jp": ["jp1", "jp2", "jp3", "jp4", "jp5", "jp6", "jp7", "jp8"],
     "mx": ["mx1", "mx2", "mx3"],
     "nl": ["nl1", "nl2", "nl3"],
-    "no": ["no1", "no2", "no3"],
+    "no": ["no1", "no2"],
     "sg": ["sg1", "sg2", "sg3"],
     "us": ["us1", "us2", "us3"]
 }
-history = []
 
 def read_vpn_output(process,connected):
     for line in process.stdout:
@@ -79,19 +81,20 @@ Example: nl
     config_file = f"Vpn base/{server}.ovpn"
     auth_file = "openvpnkey.txt"
 
-    vpn_command = [
-        "sudo",
-        "openvpn",
-        "--config", config_file,
-        "--auth-user-pass", auth_file
-    ]
+    vpn_command = get_vpn(config_file, auth_file)
+    if vpn_command is None:
+        print("Unsupported operating system.")
+        return
+
+    creationflags = subprocess.CREATE_NO_WINDOW if system == "Windows" else 0      
 
     process = subprocess.Popen(
         vpn_command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        bufsize=1
+        bufsize=1,
+        creationflags=creationflags
     )
     
     connected = threading.Event()
@@ -108,7 +111,8 @@ Example: nl
     if connected.wait(timeout=30):
         conn_for_json = "Success"
         print("Your connection is successful!")
-        
+        time.sleep(2)  # Wait for a moment to ensure the connection is stable
+
         while True:
             print("To check the connection you can view your IP, just enter '4' ")
             try:
@@ -153,6 +157,8 @@ Ping: {ping}ms
                 history = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             history = []
+    else:
+        history = []
 
     history.append({
            "Server": server,
@@ -166,5 +172,4 @@ Ping: {ping}ms
         json.dump(history, file, indent=4)
 
 
-    return last_server
-    return process
+    return last_server, process
