@@ -1,11 +1,10 @@
-import os
-import json
-from concurrent.futures import ThreadPoolExecutor
-from getdata import getdata_inf
 import subprocess
-import requests
 import time
 import sys
+import threading
+
+from system import scan_system, get_vpn
+from getdata import getdata_inf
 
 servers = {
     "ca": ["ca1", "ca2", "ca3", "ca4", "ca5", "ca6"],
@@ -18,6 +17,19 @@ servers = {
     "us": ["us1", "us2", "us3", "us4", "us5", "us6"]
 }
 
+system = scan_system()
+
+def closevpn(process):
+    process.terminate()
+    process.wait()
+    print("Connection is close")
+
+def read_vpn_output(process,connected):
+    for line in process.stdout:
+        if "Initialization Sequence Completed" in line:
+            connected.set()
+            return
+        
 def fastping():
     print("""
 Available country
@@ -52,43 +64,50 @@ Example: nl
 
     print(f"All servers from this country will be checked")
     for server in servers[country]:
-         print(f"Checking {server}...")
+        print(f"Checking {server}...")
 
-         config_file = f"Vpn base/{server}.ovpn"
-         auth_file = "openvpnkey.txt"
+        config_file = f"Vpn base/{server}.ovpn"
+        auth_file = "openvpnkey.txt"
 
-         vpn_command = [
-             "sudo",
-             "openvpn",
-             "--config", config_file,
-             "--auth-user-pass", auth_file
-         ]
+        vpn_command = get_vpn(config_file, auth_file)
+        if vpn_command is None:
+            print("Unsupported operating system.")
+            return
+        
+        creationflags = subprocess.CREATE_NO_WINDOW if system == "Windows" else 0       
 
+        process = subprocess.Popen(
+            vpn_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            creationflags=creationflags
+        )
 
-         process = subprocess.Popen(
-             vpn_command,
-             stdout=subprocess.PIPE,
-             stderr=subprocess.STDOUT,
-             text=True,
-             bufsize=1
-         )
+        connected = threading.Event()
+        thread = threading.Thread(
+                target=read_vpn_output,
+                args=(process, connected)
+            )
+        
+        thread.start()
 
-         time.sleep(2)
-         result = process.poll()
+        if connected.wait(timeout=30):
+            print(f"{server} is connected!")
+            time.sleep(2)  # Wait for a moment to ensure the connection is stable
+            ip, country, latency, ping = getdata_inf()
 
-         if result is None:
-             print(f"{server} is connected!")
-             ip, country, latency, ping = getdata_inf()
+            ping_results[server] = ping
 
-             ping_results[server] = ping
+            print(f"{server}: {ping}ms")
+        else:
+            print(f"{server} is failed")
+            ping_results[server] = None
+            closevpn(process)
 
-             print(f"{server}: {ping}ms")
-         else:
-             print(f"{server} is failed")
-             ping_results[server] = None
-
-         process.terminate()
-         process.wait()
+        process.terminate()
+        process.wait()
 
     valid_vpn = {
         server: ping
